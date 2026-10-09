@@ -1,0 +1,66 @@
+$ ss create acme-notes --yes --demo
+╭──────────────────────────────────────────────────────────╮
+│ ShadowStone  scaffold a SaaS: Next.js web + FastAPI core │
+╰───────────────────────── v0.2.0 ─────────────────────────╯
+
+shadowstone.yaml
+project_name: acme-notes
+components:
+  acme-notes-web:
+    port: 3300
+  acme-notes-core:
+    api_port: 8300
+oauth:
+  enabled: true
+  providers:
+  - Google
+  - GitHub
+database:
+  provider: postgres-docker
+billing:
+  enabled: true
+  provider: stripe
+  tiers:
+  - name: Starter
+    prices:
+    - amount: 9.0
+      interval: monthly
+    - amount: 90.0
+      interval: yearly
+  - name: Pro
+    prices:
+    - amount: 29.0
+      interval: monthly
+    - amount: 290.0
+      interval: yearly
+deployment:
+  enabled: false
+  provider: coolify
+  description: ''
+created_at: '2026-10-09T21:33:44'
+updated_at: '2026-10-09T21:33:44'
+demo: true
+
+ ✔ Created acme-notes/
+ ✔ acme-notes-web  123 files from templates/web
+ ✔ acme-notes-core  33 files from templates/core
+ ✔ Wrote .env files  fresh local Postgres password, never committed
+ ! Stripe tiers saved (Starter, Pro)  set STRIPE_SECRET_KEY to create them in Stripe
+ ✔ git init  branch main
+
+Done. Acme Notes is ready.
+
+╭───────────────────────────────── Next steps ──────────────────────────────────╮
+│ cd acme-notes                                                                 │
+│                                                                               │
+│ web   cd acme-notes-web                                                       │
+│       docker compose up -d      # Postgres + local Neon HTTP proxy            │
+│       npm install && npm run db:migrate                                       │
+│       npm run dev               # http://localhost:3300                       │
+│                                                                               │
+│ core  cd acme-notes-core                                                      │
+│       docker compose up -d redis                                              │
+│       uv run uvicorn main:app --reload --port 8300   # /docs                  │
+│                                                                               │
+│ Clerk: create an app with Google, GitHub sign-in and paste its keys into .env │
+╰───────────────────────────────────────────────────────────────────────────────╯

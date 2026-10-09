@@ -1,0 +1,60 @@
+# `docker compose up -d redis` for local development; the full stack for deployment.
+services:
+  web:
+    build: .
+    env_file: .env
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - PORT=8000
+      - HOST=0.0.0.0
+      # This will make the service accessible at myapi.example.com
+      - SERVICE_FQDN_WEBAPI_8000=https://myapi.example.com
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    expose:
+      - "8000"
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  celery_worker:
+    build: .
+    command: celery -A app.core.scheduler.job_tasks worker --loglevel=info
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - app-network
+
+  celery_beat:
+    build: .
+    command: celery -A app.core.scheduler.job_tasks beat --loglevel=info
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - app-network
+
+volumes:
+  redis-data:
+
+networks:
+  app-network:
+    driver: bridge

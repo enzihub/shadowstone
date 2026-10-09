@@ -1,0 +1,32 @@
+[project]
+name = "shadowstone-core-template"
+version = "0.2.0"
+description = "FastAPI + Celery + Redis + SQLAlchemy service scaffolded by ShadowStone"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.7",
+    "uvicorn[standard]>=0.34.0",
+    "python-dotenv>=1.0.1",
+    "python-multipart>=0.0.20",
+    "pytz>=2024.2",
+    "jinja2>=3.1.5",
+    "loguru>=0.7.3",
+    "celery[redis]>=5.4.0",
+    "sqlalchemy>=2.0.38",
+    "psycopg2-binary>=2.9.10",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.7.1",
+    "sentry-sdk[fastapi]>=2.20.0",
+    "google-generativeai>=0.8.4",
+    "clerk-backend-api>=1.7.2",
+    "mailtrap>=2.0.1",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3.4", "pytest-asyncio>=0.25.3", "black>=25.1.0", "isort>=6.0.0", "pre-commit>=4.1.0"]
+
+[tool.uv]
+package = false
+
+[tool.isort]
+profile = "black"

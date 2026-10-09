@@ -1,0 +1,36 @@
+[project]
+name = "shadowstone-cli"
+version = "0.2.0"
+description = "Scaffold a SaaS: Next.js web app + FastAPI core API, with Clerk, Stripe, Postgres and Redis wired up."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "Enzi Studio" }]
+dependencies = [
+    "typer>=0.15.1",
+    "rich>=13.9.4",
+    "beaupy>=3.10.1",
+    "pyyaml>=6.0.1",
+    "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+stripe = ["stripe>=11.4.1"]
+coolify = ["requests>=2.32"]
+
+[project.scripts]
+ss = "shadowstone_cli.main:run"
+shadowstone = "shadowstone_cli.main:run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["shadowstone_cli"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"templates" = "shadowstone_cli/_templates"
+
+[tool.hatch.build]
+exclude = ["**/node_modules", "**/.venv", "**/.next", "**/__pycache__", "docs", "assets"]

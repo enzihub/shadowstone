@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShadowStone: one command, a whole SaaS</title>
+<meta name="description" content="Open-source CLI that scaffolds a Next.js web app and a FastAPI service, wired to Clerk, Stripe, Postgres and Redis. MIT licensed, by Enzi Studio.">
+<meta property="og:title" content="ShadowStone: one command, a whole SaaS">
+<meta property="og:description" content="Next.js + FastAPI, wired to Clerk, Stripe, Postgres and Redis. Open source, MIT.">
+<meta property="og:image" content="https://raw.githubusercontent.com/enzihub/shadowstone/main/docs/og.png">
+<meta property="og:url" content="https://github.com/enzihub/shadowstone">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/enzihub/shadowstone/main/docs/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 28 10 24 28H8L4 10Z' fill='%238b5cf6'/%3E%3C/svg%3E">
+<style>
+@font-face{font-family:Inter;src:url(fonts/Inter-latin.woff2) format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Instrument Serif';src:url(fonts/InstrumentSerif.woff2) format('woff2');font-display:swap}
+@font-face{font-family:Mono;src:url(fonts/JetBrainsMono.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Mono;src:url(fonts/JetBrainsMono-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
+:root{--bg:#07060b;--card:#100e17;--line:rgba(255,255,255,.09);--ink:#f3f2f7;--mute:#b7b3c7;--dim:#8a869c;--violet:#8b5cf6;--lav:#b9a4ff;--deep:#6d28d9;--green:#34d399}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+img{max-width:100%;height:auto;display:block}
+code,pre,.mono{font-family:Mono,ui-monospace,monospace}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400}
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(7,6,11,.92);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:22px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:-.01em;text-decoration:none}
+.brand svg{width:24px;height:24px}
+nav .links{margin-left:auto;display:flex;gap:22px;font-size:15px;color:var(--mute)}
+nav .links a{text-decoration:none}
+nav .links a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:12px;padding:12px 20px;font-weight:600;font-size:15px;text-decoration:none;transition:transform .2s,box-shadow .2s,background .2s}
+.btn.primary{background:var(--deep);color:#fff;box-shadow:0 10px 30px rgba(109,40,217,.4)}
+.btn.primary:hover{transform:translateY(-1px);box-shadow:0 14px 44px rgba(139,92,246,.55)}
+.btn.ghost{border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.03)}
+.btn.ghost:hover{background:rgba(255,255,255,.07)}
+.hero{position:relative;padding:84px 0 36px;overflow:hidden}
+.glow{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+.g1{width:640px;height:480px;right:-140px;top:-200px;background:var(--deep);opacity:.55}
+.g2{width:420px;height:320px;right:160px;top:340px;background:#2563eb;opacity:.28}
+.g3{width:360px;height:300px;left:-180px;top:380px;background:var(--violet);opacity:.22}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse at 25% 35%,#000 15%,transparent 70%);mask-image:radial-gradient(ellipse at 25% 35%,#000 15%,transparent 70%);pointer-events:none}
+.hero-grid{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13.5px;color:var(--mute);background:rgba(255,255,255,.03)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+h1{font-size:clamp(48px,7.2vw,88px);line-height:.96;letter-spacing:-.015em;margin:22px 0 22px}
+h1 em{color:var(--lav)}
+.lede{text-wrap:pretty;font-size:19px;color:var(--mute);max-width:520px}
+.cmd{display:inline-flex;align-items:center;gap:10px;margin-top:26px;border:1px solid rgba(139,92,246,.45);background:rgba(139,92,246,.1);border-radius:12px;padding:12px 16px;font-size:16px;color:#ece7ff;max-width:100%}
+.cmd b{color:var(--lav)}
+.typed{border-right:2px solid var(--lav);padding-right:2px;white-space:nowrap}
+.cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+.term{border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 40px 100px rgba(0,0,0,.65),0 0 60px rgba(109,40,217,.18);transform:rotate(-1deg)}
+section{padding:72px 0;position:relative}
+h2{text-wrap:balance;font-size:clamp(34px,5vw,54px);line-height:1.03;letter-spacing:-.01em;margin-bottom:14px}
+.sub{text-wrap:pretty;color:var(--mute);max-width:660px}
+.frame{border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:0 40px 100px rgba(0,0,0,.6);background:#000}
+.demo{margin-top:34px}
+.cap{font-size:14px;color:var(--dim);margin-top:12px;text-wrap:pretty}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:36px}
+.step{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:18px;padding:22px 20px;transition:border-color .3s,transform .3s}
+.step:hover{border-color:rgba(185,164,255,.45);transform:translateY(-2px)}
+.n{font:600 12px Inter;letter-spacing:.12em;color:var(--lav)}
+.step h3{font-size:19px;margin:10px 0 8px;letter-spacing:-.01em}
+.step p{font-size:15px;color:var(--mute);text-wrap:pretty}
+.step code{display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px;color:#c4b5fd}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;margin-top:60px}
+.feat.rev .txt{order:2}
+.feat h3{text-wrap:balance;font-size:30px;line-height:1.1;margin-bottom:12px}
+.feat p{color:var(--mute);text-wrap:pretty}
+.feat ul{margin-top:14px;list-style:none;color:var(--mute);font-size:15.5px}
+.feat li{padding-left:22px;position:relative;margin:6px 0}
+.feat li:before{content:"";position:absolute;left:2px;top:10px;width:8px;height:8px;border-radius:2px;transform:rotate(45deg);background:var(--violet)}
+.narrow{max-width:360px;margin:0 auto}
+pre{-webkit-overflow-scrolling:touch;background:#0c0b12;border:1px solid var(--line);border-radius:16px;padding:20px 22px;overflow-x:auto;font-size:14px;line-height:1.7;color:#ddd9ea;margin-top:24px}
+pre .c{color:var(--dim)} pre .p{color:var(--lav)}
+table{width:100%;border-collapse:collapse;margin-top:24px;font-size:15px}
+td,th{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--dim);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+td code{color:#d9ccff;font-size:13.5px}
+.status{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:30px}
+.box{border:1px solid var(--line);border-radius:18px;padding:22px;background:rgba(255,255,255,.025)}
+.box h3{font-size:17px;margin-bottom:8px}
+.box p,.box li{color:var(--mute);font-size:15px}
+.box ul{list-style:none} .box li{margin:6px 0;padding-left:18px;position:relative}
+.box.ok li:before{content:"✓";position:absolute;left:0;color:var(--green)}
+.box.no li:before{content:"–";position:absolute;left:0;color:var(--dim)}
+footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--dim);font-size:14px}
+footer .wrap{display:flex;gap:20px;justify-content:space-between;flex-wrap:wrap}
+footer a{color:var(--mute)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.term{transform:none}.btn,.step{transition:none}}
+@media (max-width:900px){.hero-grid,.feat,.status{grid-template-columns:1fr}.feat.rev .txt{order:0}.steps{grid-template-columns:1fr 1fr}nav .links{display:none}.term{transform:none}}
+@media (max-width:520px){.steps{grid-template-columns:1fr}h1{font-size:46px}.cmd{font-size:14px}.hero{padding-top:56px}section{padding:56px 0}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c4b5fd"/><stop offset="1" stop-color="#6d28d9"/></linearGradient></defs><path d="M16 2 28 10 24 28H8L4 10Z" fill="url(#g)"/><path d="M16 2 20 10 16 28 12 10Z" fill="#07060b" opacity=".35"/></svg>ShadowStone</a>
+  <div class="links"><a href="#demo">Demo</a><a href="#how">How it works</a><a href="#features">What you get</a><a href="#start">Quick start</a></div>
+  <a class="btn ghost" href="https://github.com/enzihub/shadowstone">GitHub</a>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div><div class="grid-bg"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><span class="dot"></span>Open source · MIT · by Enzi Studio</span>
+      <h1 class="serif">One command.<br><em>A whole SaaS.</em></h1>
+      <p class="lede">A CLI that scaffolds a Next.js web app and a FastAPI service, already wired to Clerk sign-in, Stripe subscriptions, Postgres and Redis.</p>
+      <div class="cmd mono" aria-label="ss create acme-notes"><b>$</b><span class="typed" data-text="ss create acme-notes">ss create acme-notes</span></div>
+      <div class="cta"><a class="btn primary" href="#start">Quick start</a><a class="btn ghost" href="https://github.com/enzihub/shadowstone">View the code</a></div>
+    </div>
+    <div class="term"><img src="img/cli.webp" width="1640" height="1670" alt="The real terminal output of ss create acme-notes --yes --demo, ending with Done and a next-steps panel."></div>
+  </div>
+</header>
+
+<section id="demo"><div class="wrap">
+  <div class="reveal">
+    <h2 class="serif">See it work</h2>
+    <p class="sub">A fresh scaffold, recorded headless. The terminal output is the real transcript. In the app, Postgres, Redis and the FastAPI core are real; Clerk and Stripe are the built-in demo stand-ins.</p>
+  </div>
+  <div class="frame demo reveal"><img src="img/demo.gif" width="880" height="564" alt="Animated: ss create runs, then the scaffolded app shows pricing, starts a free trial, fills in onboarding and opens the API docs." loading="lazy"></div>
+  <p class="cap">Ada Park and Acme Notes are invented. Nothing here talks to a real Clerk or Stripe account.</p>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <div class="reveal">
+    <h2 class="serif">How it works</h2>
+    <p class="sub">Answer a few questions, or pass <code>--yes</code>. You get two services that already know about each other.</p>
+  </div>
+  <div class="steps">
+    <div class="step reveal"><div class="n">01 · ASK</div><h3>Choose your parts</h3><p>Web, core or both. Sign-in providers, database, Stripe tiers and prices, and an optional Coolify project.</p><code>ss create &lt;name&gt;</code></div>
+    <div class="step reveal"><div class="n">02 · COPY</div><h3>Copy the templates</h3><p>The bundled Next.js and FastAPI templates are copied, named after your project and given their ports.</p><code>&lt;name&gt;-web/ &lt;name&gt;-core/</code></div>
+    <div class="step reveal"><div class="n">03 · WIRE</div><h3>Wire the services</h3><p>A fresh local Postgres password, matching database and Redis URLs, and each side's URL for the other.</p><code>.env (never committed)</code></div>
+    <div class="step reveal"><div class="n">04 · RUN</div><h3>Start and build</h3><p>docker compose, migrate, then npm run dev and uvicorn. With a Stripe key it also creates your products and prices.</p><code>--demo: no accounts</code></div>
+  </div>
+</div></section>
+
+<section id="features"><div class="wrap">
+  <div class="reveal"><h2 class="serif">What you get</h2><p class="sub">Every screenshot below is the scaffolded app, running locally.</p></div>
+
+  <div class="feat reveal">
+    <div class="txt"><h3 class="serif">Pricing from the tiers you chose</h3>
+      <p>Plans are read live from Stripe, with a monthly and yearly toggle. Checkout comes with a 7-day trial, plus the customer portal and a subscription webhook.</p>
+      <ul><li>Middleware sends users without a plan to <code>/pricing</code></li><li>With a key, <code>ss create</code> makes the products for you</li></ul></div>
+    <div class="frame"><img src="img/pricing.webp" width="1600" height="908" alt="Pricing page with Starter at $9 a month, Pro at $29 a month and a custom Enterprise plan." loading="lazy"></div>
+  </div>
+
+  <div class="feat rev reveal">
+    <div class="txt"><h3 class="serif">Onboarding that reaches the API</h3>
+      <p>Connect an account, write a short bio, add a phone number, start a trial. Saving the phone number stores it in Postgres and queues a welcome message on the FastAPI core through Redis.</p>
+      <ul><li>Clerk sign-in with Google, GitHub, Microsoft or Slack</li><li>Drizzle schema and migrations</li></ul></div>
+    <div class="frame narrow"><img src="img/dashboard.webp" width="820" height="1401" alt="Onboarding card with four steps, each ticked: account connected, bio, phone number and trial." loading="lazy"></div>
+  </div>
+
+  <div class="feat reveal">
+    <div class="txt"><h3 class="serif">Settings, ready to extend</h3>
+      <p>Profile details, notification preferences and the current plan, with a link to the Stripe portal.</p></div>
+    <div class="frame"><img src="img/settings.webp" width="1600" height="662" alt="Settings page: welcome heading, profile details with a verified email, and a phone number field." loading="lazy"></div>
+  </div>
+
+  <div class="feat rev reveal">
+    <div class="txt"><h3 class="serif">A FastAPI core with a queue</h3>
+      <p>Health checks for Postgres and Redis, a Redis message queue, Celery beat workers, and an optional Gemini summary and Mailtrap email pipeline. Each optional service stays off until you add its key.</p></div>
+    <div class="frame"><img src="img/api.webp" width="1600" height="1025" alt="FastAPI docs page listing the core routes: root, health, queue, send-newsletter and welcome." loading="lazy"></div>
+  </div>
+</div></section>
+
+<section id="start"><div class="wrap">
+  <div class="reveal"><h2 class="serif">Quick start</h2><p class="sub">You need Python 3.10+, uv (or pip), Node 20+ and Docker.</p></div>
+<pre class="reveal"><span class="c"># install the CLI</span>
+<span class="p">$</span> git clone https://github.com/enzihub/shadowstone &amp;&amp; cd shadowstone
+<span class="p">$</span> uv tool install .
+
+<span class="c"># scaffold, with local stand-ins for Clerk and Stripe</span>
+<span class="p">$</span> ss create acme-notes --yes --demo
+
+<span class="c"># web</span>
+<span class="p">$</span> cd acme-notes/acme-notes-web
+<span class="p">$</span> docker compose up -d
+<span class="p">$</span> npm install &amp;&amp; npm run db:migrate &amp;&amp; npm run db:seed
+<span class="p">$</span> npm run dev                <span class="c"># http://localhost:3000</span>
+
+<span class="c"># core</span>
+<span class="p">$</span> cd ../acme-notes-core
+<span class="p">$</span> docker compose up -d redis
+<span class="p">$</span> uv run uvicorn main:app --port 8000   <span class="c"># /docs</span></pre>
+  <table class="reveal">
+    <tr><th>Optional</th><th>What it does</th></tr>
+    <tr><td><code>STRIPE_SECRET_KEY</code></td><td>Creates your tiers as Stripe products and prices</td></tr>
+    <tr><td><code>COOLIFY_URL</code>, <code>COOLIFY_API_TOKEN</code></td><td>Creates a Coolify project for deployment</td></tr>
+    <tr><td><code>SS_WEB_PORT</code>, <code>SS_API_PORT</code>, …</td><td>Picks other local ports when the defaults are taken</td></tr>
+  </table>
+</div></section>
+
+<section id="status"><div class="wrap">
+  <div class="reveal"><h2 class="serif">Status</h2><p class="sub">Built by Enzi Studio in 2025 as an internal starter, and shared as is. It is not maintained.</p></div>
+  <div class="status">
+    <div class="box ok reveal"><h3>Checked for this release</h3><ul><li><code>ss create</code> and <code>ss add</code> from a clean install</li><li>Web: install, migrate, seed, pricing, demo checkout, dashboard, settings</li><li>Core: health check, welcome queue, tests</li></ul></div>
+    <div class="box no reveal"><h3>Not checked here</h3><ul><li>Real Clerk and Stripe accounts</li><li>Stripe product creation and the Coolify call</li><li>Gemini and Mailtrap pipeline, Docker image builds</li></ul></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span>Built by Enzi Studio · MIT licence</span>
+  <span><a href="https://github.com/enzihub/shadowstone">github.com/enzihub/shadowstone</a></span>
+</div></footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(function(e){e.classList.add('in')}); return; }
+  var io = new IntersectionObserver(function(entries){ entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} }); }, {threshold:.12});
+  els.forEach(function(e){ io.observe(e) });
+  var t = document.querySelector('.typed'), s = t.getAttribute('data-text'), i = 0;
+  t.textContent = '';
+  (function type(){ t.textContent = s.slice(0, ++i); if (i < s.length) setTimeout(type, 70); })();
+})();
+</script>
+</body>
+</html>
